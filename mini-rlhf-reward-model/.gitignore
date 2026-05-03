@@ -1,1 +1,5 @@
-\.venv
+
+.venv/
+__pycache__/
+data/embeddings/chosen_full_mpnet.npy
+data/embeddings/rejected_full_mpnet.npy
