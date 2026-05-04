@@ -1,0 +1,16 @@
+/yandexgpt-5-lite-8b-instruct-q8_0.gguf
+.DS_Store
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+/yandexgpt-5-lite-8b-instruct-q4_k_m.gguf
+.dvc
+embeddings.npy
+rag_meta_unique.jsonl
+yandexgpt-5-lite-8b-instruct-q4_k_m.gguf.dvc
