@@ -39,7 +39,7 @@
 ## 📁 Структура
 ```
 project/
-├── main.py                 # Основной пайплайн
+├── solution.py                 # Основной пайплайн
 ├── rag_utils_gpu.py        # RAG + эмбеддинги
 ├── input.json / output.json # Вход/выход
 └── *.gguf                  # Модель LLM
@@ -47,7 +47,7 @@ project/
 
 ## 🚀 Запуск
 ```bash
-python main.py  # Читает input.json → пишет output.json
+python solution.py  # Читает input.json → пишет output.json
 ```
 
 > **Примечание:** Требуется локально размещённая модель `yandexgpt-5-lite-8b-instruct-q4_k_m.gguf` и инициализированный RAG-индекс.
