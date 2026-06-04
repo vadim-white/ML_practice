@@ -1,5 +1,11 @@
 
 .venv/
 __pycache__/
+.DS_Store
+
+# Большие эмбеддинги (>100MB — лимит GitHub)
 data/embeddings/chosen_full_mpnet.npy
 data/embeddings/rejected_full_mpnet.npy
+
+# RoBERTa checkpoints (300–500MB — нельзя на GitHub без LFS)
+models/*.zip
