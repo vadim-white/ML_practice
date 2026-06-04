@@ -164,4 +164,4 @@ LogReg на 160k (MPNet) дал 0.567 — хуже чем на 15k (MiniLM). Ш�
 
 ## Автор
 
-[Vadim K]
+[Vadim  K]
