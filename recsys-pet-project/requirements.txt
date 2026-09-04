@@ -1,0 +1,12 @@
+pandas
+pyarrow
+numpy
+matplotlib
+scikit-learn
+jupyter
+notebook
+implicit
+catboost
+tqdm
+qdrant-client
+torch
