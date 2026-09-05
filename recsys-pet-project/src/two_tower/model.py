@@ -28,15 +28,32 @@ class Tower(nn.Module):
 
 
 class TwoTowerModel(nn.Module):
-    def __init__(self, num_users: int, num_items: int, embedding_dim: int = 64, temperature: float = 0.1):
+    def __init__(
+        self,
+        num_users: int,
+        num_items: int,
+        embedding_dim: int = 64,
+        temperature: float = 0.1,
+        item_log_prob: torch.Tensor | None = None,
+    ):
         super().__init__()
         self.user_tower = Tower(num_users, embedding_dim)
         self.item_tower = Tower(num_items, embedding_dim)
         self.temperature = temperature
+        if item_log_prob is not None:
+            self.register_buffer("item_log_prob", item_log_prob)
+        else:
+            self.item_log_prob = None
 
     def forward(self, user_ids: torch.Tensor, pos_item_ids: torch.Tensor, neg_item_ids: torch.Tensor) -> torch.Tensor:
         """InfoNCE loss: позитивы на диагонали, негативы — товары в батче
-        плюс собственные popularity-сэмплированные негативы каждого примера."""
+        плюс собственные popularity-сэмплированные негативы каждого примера.
+
+        logQ correction (Yi et al. 2019): негативы сэмплированы пропорционально
+        популярности, без коррекции модель учится занижать именно популярные
+        товары — а на MovieLens они и есть основной источник хороших
+        рекомендаций. Вычитаем log(Q(item)) из скора каждого негатива (но не
+        из pos_scores — это истинная метка, а не сэмпл)."""
         user_emb = self.user_tower(user_ids)
         pos_emb = self.item_tower(pos_item_ids)
         neg_emb = self.item_tower(neg_item_ids.reshape(-1)).reshape(neg_item_ids.shape[0], neg_item_ids.shape[1], -1)
@@ -44,6 +61,10 @@ class TwoTowerModel(nn.Module):
         pos_scores = (user_emb * pos_emb).sum(-1, keepdim=True) / self.temperature
         neg_scores = torch.einsum("bd,bnd->bn", user_emb, neg_emb) / self.temperature
         in_batch_scores = user_emb @ pos_emb.T / self.temperature
+
+        if self.item_log_prob is not None:
+            neg_scores = neg_scores - self.item_log_prob[neg_item_ids]
+            in_batch_scores = in_batch_scores - self.item_log_prob[pos_item_ids].unsqueeze(0)
 
         logits = torch.cat([pos_scores, neg_scores, in_batch_scores], dim=1)
         labels = torch.zeros(user_ids.shape[0], dtype=torch.long, device=user_ids.device)

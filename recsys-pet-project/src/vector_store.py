@@ -26,9 +26,9 @@ class VectorStore:
         self.client.upsert(collection_name=name, points=points)
 
     def search(self, name: str, query_vector, top_k: int = 100):
-        hits = self.client.search(
+        response = self.client.query_points(
             collection_name=name,
-            query_vector=query_vector.tolist(),
+            query=query_vector.tolist(),
             limit=top_k,
         )
-        return [(hit.id, hit.score) for hit in hits]
+        return [(point.id, point.score) for point in response.points]

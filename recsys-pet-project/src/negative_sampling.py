@@ -41,3 +41,8 @@ class PopularityNegativeSampler:
 
     def sample_for_positive(self, exclude: set, ratio: int = NEG_RATIO) -> np.ndarray:
         return self.sample(exclude, ratio)
+
+    def log_probs(self) -> np.ndarray:
+        """log(Q(item)) в порядке idx (0..num_items-1) — для logQ-коррекции
+        popularity bias в Two-Tower (см. src/two_tower/model.py)."""
+        return np.log(self.probs + 1e-12)
